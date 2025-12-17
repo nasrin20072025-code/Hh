@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3X TEAM VIP </title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00ff00; /* Neon Green */
+            --accent: #ff1744; /* Neon Red */
+            --bg: #0a0a0a; /* Deep Black */
+            --text: #ffffff; /* Pure White */
+            --card-bg: rgba(10, 20, 30, 0.95); /* Semi-transparent Dark */
+            --win: #00e676; /* Bright Green */
+            --loss: #ff1744; /* Bright Red */
+            --pending: #ffd600; /* Vibrant Yellow */
+            --glow: rgba(0, 255, 0, 0.7); /* Neon Green Glow */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg), #1a1a4e, #00ff00);
+            color: var(--text);
+            line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Password Modal */
+        .password-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .password-modal-content {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 0 30px var(--glow), 0 0 50px var(--primary);
+            border: 2px solid var(--primary);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .password-modal-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            text-shadow: 0 0 15px var(--glow);
+            margin-bottom: 20px;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text);
+            font-size: 16px;
+            box-shadow: 0 0 15px var(--glow);
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--glow);
+        }
+
+        .password-error {
+            color: var(--loss);
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px var(--loss);
+            display: none;
+        }
+
+        .password-submit {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text);
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 0 15px var(--glow);
+            transition: all 0.3s ease;
+        }
+
+        .password-submit:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 0 25px var(--glow);
+        }
+
+        .telegram-link-password {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 15px;
+            text-decoration: none;
+            color: var(--text);
+            font-size: 16px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 15px var(--glow);
+            transition: all 0.3s ease;
+        }
+
+        .telegram-link-password:hover {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            box-shadow: 0 0 25px var(--glow);
+            transform: translateY(-3px);
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+            display: none; /* Hidden until password is verified */
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px var(--glow), 0 0 30px var(--primary);
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 12px 15px;
+            font-size: 14px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 20px var(--glow), inset 0 0 10px var(--glow);
+            margin-top: 10px;
+        }
+
+        .server-status .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--win);
+            display: inline-block;
+            margin-right: 5px;
+            animation: pulse 1.5s infinite;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), 0 0 30px var(--glow);
+            border: 2px solid var(--primary);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 40px var(--glow);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-shadow: 0 0 10px var(--glow);
+        }
+
+        .prediction-section {
+            text-align: center;
+        }
+
+        .period-display {
+            font-size: 30px;
+            font-weight: 700;
+            color: var(--accent);
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 0 15px var(--glow);
+        }
+
+        .prediction-result {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--primary);
+        }
+
+        .prediction-text {
+            font-size: 18px;
+            color: var(--win);
+            margin-bottom: 10px;
+        }
+
+        .prediction-value {
+            font-size: 40px;
+            font-weight: 700;
+            color: var(--accent);
+            text-shadow: 0 0 15px var(--glow), 0 0 30px var(--accent);
+            animation: gentlePulse 2.5s infinite;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            margin: 10px 0;
+            overflow: hidden;
+            box-shadow: 0 0 10px var(--glow);
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 6px;
+            width: 85%;
+            animation: fillAnimation 2s ease-in-out;
+        }
+
+        .dashboard-grid, .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .dashboard-item, .shop-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid var(--primary);
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px var(--glow);
+        }
+
+        .dashboard-item:hover, .shop-item:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 25px var(--glow);
+        }
+
+        .dashboard-value, .item-price {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 10px 0;
+            text-shadow: 0 0 10px var(--glow);
+        }
+
+        .btn {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            color: var(--text);
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px var(--glow), inset 0 0 10px var(--glow);
+        }
+
+        .btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), 0 0 25px var(--glow);
+        }
+
+        .history-container {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .history-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .history-container::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 12px;
+            box-shadow: 0 0 10px var(--glow);
+        }
+
+        .history-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 0 15px var(--glow);
+        }
+
+        .history-card.win { border-left-color: var(--win); }
+        .history-card.loss { border-left-color: var(--loss); }
+        .history-card.pending { border-left-color: var(--pending); }
+
+        .history-status {
+            font-size: 24px;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--glow);
+        }
+
+        .stats-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: conic-gradient(var(--win) 0% 25%, var(--loss) 25% 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            position: relative;
+            box-shadow: 0 0 20px var(--glow);
+        }
+
+        .stats-circle::before {
+            content: '';
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: var(--card-bg);
+        }
+
+        .stats-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--accent);
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 10px var(--glow);
+        }
+
+        .stats-label {
+            font-size: 15px;
+            color: var(--text);
+            position: relative;
+            z-index: 1;
+        }
+
+        .fund-level {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 15px var(--glow);
+            border: 1px solid var(--primary);
+        }
+
+        .feedback-text {
+            width: 100%;
+            height: 80px;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--primary);
+            color: var(--text);
+            resize: none;
+            box-shadow: 0 0 15px var(--glow);
+        }
+
+        .feedback-text:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--glow);
+        }
+
+        .telegram-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 15px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px var(--glow);
+            border: 2px solid var(--primary);
+        }
+
+        .telegram-link:hover {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: var(--text);
+            box-shadow: 0 0 25px var(--glow);
+            transform: translateY(-3px);
+        }
+
+        .footer-credits {
+            text-align: center;
+            padding: 20px;
+            font-size: 15px;
+            color: var(--text);
+            border-top: 2px solid var(--primary);
+            box-shadow: 0 0 15px var(--glow);
+            text-shadow: 0 0 10px var(--glow);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 20px var(--glow);
+            z-index: 1000;
+            animation: slideIn 0.5s forwards;
+        }
+
+        .notification.win { border-left: 4px solid var(--win); }
+        .notification.loss { border-left: 4px solid var(--loss); }
+        .notification.warning { border-left: 4px solid var(--pending); }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.3); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.7; }
+        }
+
+        @keyframes gentlePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fillAnimation {
+            from { width: 0; }
+            to { width: 85%; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Password Modal -->
+    <div class="password-modal" id="passwordModal">
+        <div class="password-modal-content">
+            <div class="password-modal-title">3X TEAM NAYEEM </div>
+            <input type="password" class="password-input" id="passwordInput" placeholder="Enter Password">
+            <div class="password-error" id="passwordError">Incorrect Password! Try Again.</div>
+            <button class="password-submit" id="passwordSubmit">Submit</button>
+            <a href="https://t.me/+XkSt-apEOfMxZjI1" class="telegram-link-password" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-telegram"></i> Join Telegram Channel
+            </a>
+        </div>
+    </div>
+
+    <div class="container" id="mainContent">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo"MAX TEAM</div>
+            <div class="status-bar">
+                <div class="server-status">
+                    <span class="indicator"></span>
+                    <span>Server Connected</span>
+                </div>
+                <div id="currentTime">02:02</div>
+            </div>
+        </div>
+
+        <!-- Prediction Section -->
+        <div class="card prediction-section">
+            <div class="card-title"><i class="fas fa-crown"></i> AI Prediction</div>
+            <div class="period-display" id="periodDisplay">11186</div>
+            <div class="prediction-result">
+                <div class="prediction-text">AI Prediction</div>
+                <div class="prediction-value" id="predictionDisplay">BIG 5</div>
+                <div class="confidence-bar">
+                    <div class="confidence-fill"></div>
+                </div>
+                <div class="confidence-value">85%</div>
+            </div>
+            <a href="https://t.me/BDTM1AKASH" class="telegram-link" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-telegram"></i> Join Telegram Channel
+            </a>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-gem"></i> Premium Dashboard</div>
+            <div class="dashboard-grid">
+                <div class="dashboard-item win">
+                    <div><i class="fas fa-trophy"></i> Wins</div>
+                    <div class="dashboard-value" id="wins">1</div>
+                </div>
+                <div class="dashboard-item loss">
+                    <div><i class="fas fa-skull"></i> Losses</div>
+                    <div class="dashboard-value" id="losses">3</div>
+                </div>
+                <div class="dashboard-item">
+                    <div><i class="fas fa-percent"></i> Accuracy</div>
+                    <div class="dashboard-value" id="accuracy">25.00%</div>
+                </div>
+                <div class="dashboard-item">
+                    <div><i class="fas fa-fire"></i> Streak</div>
+                    <div class="dashboard-value" id="streak">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Future Shop Section -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-shopping-cart"></i> Future Shop</div>
+            <div class="shop-grid">
+                <div class="shop-item">
+                    <div class="item-title">Level 1 Plan</div>
+                    <div class="item-price">TAKA 300</div>
+                    <button class="btn buy-now">Buy Now</button>
+                </div>
+                <div class="shop-item">
+                    <div class="item-title">Level 2 Plan</div>
+                    <div class="item-price">TAKA 500</div>
+                    <button class="btn buy-now">Buy Now</button>
+                </div>
+                <div class="shop-item">
+                    <div class="item-title">VIP Credits</div>
+                    <div class="item-price">TAKA 1000</div>
+                    <button class="btn buy-now">Buy Now</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-history"></i> Prediction History</div>
+            <div class="history-container" id="historyContainer">
+                <div class="history-card pending">
+                    <div class="history-info">
+                        <div class="history-period">Period: 11186</div>
+                        <div class="history-prediction">Prediction: BIG 5</div>
+                        <div class="history-result">Result: Waiting...</div>
+                    </div>
+                    <div class="history-status pending"><i class="fas fa-spinner"></i></div>
+                </div>
+                <div class="history-card loss">
+                    <div class="history-info">
+                        <div class="history-period">Period: 11185</div>
+                        <div class="history-prediction">Prediction: SMALL 3</div>
+                        <div class="history-result">Result: 8</div>
+                    </div>
+                    <div class="history-status loss"><i class="fas fa-skull"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-chart-pie"></i> Performance Statistics</div>
+            <div class="stats-circle">
+                <div class="stats-value" id="winRatioValue">25%</div>
+                <div class="stats-label">Win Ratio</div>
+            </div>
+            <div class="dashboard-grid">
+                <div class="dashboard-item win">
+                    <div>Total Wins</div>
+                    <div class="dashboard-value" id="totalWins">1</div>
+                </div>
+                <div class="dashboard-item loss">
+                    <div>Total Losses</div>
+                    <div class="dashboard-value" id="totalLosses">3</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fund Management Section -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-coins"></i> VIP Fund Management</div>
+            <div class="fund-level">
+                <div class="level-label">Level 1</div>
+                <div class="level-value">Deposit: TAKA 300<br>BIG/SMALL: TAKA 10</div>
+            </div>
+            <div class="fund-level">
+                <div class="level-label">Level 2</div>
+                <div class="level-value">BIG/SMALL: TAKA 30</div>
+            </div>
+            <div class="fund-level">
+                <div class="level-label">Level 3</div>
+                <div class="level-value">BIG/SMALL: TAKA 150</div>
+            </div>
+            <button class="btn" id="playBtn">PLAY NOW</button>
+            <div class="profit-display">Profit: <span id="profitValue">TAKA 0</span></div>
+        </div>
+
+        <!-- Feedback Section -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-comment-alt"></i> Send Feedback</div>
+            <textarea class="feedback-text" id="feedbackText" placeholder="Your feedback..."></textarea>
+            <button class="btn" id="sendFeedback">Send Feedback</button>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-credits">
+            Premium Developer: CHOTU<br>
+            VIP Owner: @Nahiem_HGZY_Mentor
+        </div>
+    </div>
+
+    <script>
+        // Password Verification
+        const correctPassword = "NAYEEM 3X TEAM";
+        const passwordModal = document.getElementById("passwordModal");
+        const mainContent = document.getElementById("mainContent");
+        const passwordInput = document.getElementById("passwordInput");
+        const passwordError = document.getElementById("passwordError");
+        const passwordSubmit = document.getElementById("passwordSubmit");
+
+        passwordSubmit.addEventListener("click", () => {
+            if (passwordInput.value === correctPassword) {
+                passwordModal.style.display = "none";
+                mainContent.style.display = "block";
+            } else {
+                passwordError.style.display = "block";
+                passwordInput.value = "";
+                passwordInput.focus();
+            }
+        });
+
+        // Allow Enter key to submit password
+        passwordInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                passwordSubmit.click();
+            }
+        });
+
+        // Global variables
+        let historyData = [];
+        let lastFetchedPeriod = null;
+        let lastPrediction = null;
+        let winStreak = 0;
+
+        // DOM Elements
+        const periodDisplay = document.getElementById('periodDisplay');
+        const predictionDisplay = document.getElementById('predictionDisplay');
+        const winsDisplay = document.getElementById('wins');
+        const lossesDisplay = document.getElementById('losses');
+        const accuracyDisplay = document.getElementById('accuracy');
+        const streakDisplay = document.getElementById('streak');
+        const historyContainer = document.getElementById('historyContainer');
+        const winRatioValue = document.getElementById('winRatioValue');
+        const totalWins = document.getElementById('totalWins');
+        const totalLosses = document.getElementById('totalLosses');
+        const profitValue = document.getElementById('profitValue');
+
+        // Play button event
+        document.getElementById('playBtn').addEventListener('click', () => {
+            const profit = Math.floor(Math.random() * 500) + 100;
+            profitValue.textContent = `TAKA ${profit}`;
+            profitValue.style.transform = 'scale(1.2)';
+            setTimeout(() => profitValue.style.transform = 'scale(1)', 500);
+        });
+
+        // Send feedback button
+        document.getElementById('sendFeedback').addEventListener('click', () => {
+            const feedback = document.getElementById('feedbackText').value;
+            if (feedback.trim() === '') {
+                showNotification('Please enter your feedback!', 'warning');
+                return;
+            }
+            showNotification('Feedback sent successfully!', 'win');
+            document.getElementById('feedbackText').value = '';
+        });
+
+        // Buy Now buttons
+        document.querySelectorAll('.buy-now').forEach(button => {
+            button.addEventListener('click', () => {
+                showNotification('Redirecting to payment gateway...', 'warning');
+                // Future implementation: Payment gateway API call
+            });
+        });
+
+        // AI Prediction algorithm
+        function ultraAIPredict(history) {
+            if (history.length < 3) {
+                const randomNumber = Math.floor(Math.random() * 10);
+                const prediction = randomNumber >= 5 ? "BIG" : "SMALL";
+                return { prediction, number: randomNumber };
+            }
+
+            let recentResults = history.filter(h => h.result !== "-").slice(0, 3);
+            let bigCount = 0, smallCount = 0, weight = 1;
+
+            for (let i = recentResults.length - 1; i >= 0; i--) {
+                let result = recentResults[i];
+                if (result.result >= 5) bigCount += weight;
+                else smallCount += weight;
+                weight *= 1.2;
+            }
+
+            const number = Math.floor(Math.random() * 5) + (bigCount > smallCount ? 5 : 0);
+            const prediction = number >= 5 ? "BIG" : "SMALL";
+
+            return { prediction, number };
+        }
+
+        // Update last status
+        function updateLastStatus(actualNumber) {
+            const actualOutcome = actualNumber >= 5 ? 'BIG' : 'SMALL';
+            const status = (lastPrediction === actualOutcome) ? 'WIN' : 'LOSS';
+            winStreak = status === 'WIN' ? winStreak + 1 : 0;
+            streakDisplay.textContent = winStreak;
+            return status;
+        }
+
+        // Fetch game result
+        async function fetchGameResult() {
+            try {
+                const response = await fetch(`https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${Date.now()}`);
+                const data = await response.json();
+                return data?.data?.list?.[0] || null;
+            } catch (e) {
+                console.error("API Error", e);
+                return null;
+            }
+        }
+
+        // Update prediction
+        async function updatePrediction() {
+            let result = await fetchGameResult();
+            if (!result || result.issueNumber === lastFetchedPeriod) return;
+
+            if (historyData.length > 0 && historyData[0].resultStatus === "Pending") {
+                const actualNumber = Number(result.number);
+                const status = updateLastStatus(actualNumber);
+                historyData[0].result = actualNumber;
+                historyData[0].resultStatus = status;
+
+                if (status === 'WIN') {
+                    showNotification('Congratulations! You won!', 'win');
+                } else if (status === 'LOSS') {
+                    showNotification('Sorry, you lost this round.', 'loss');
+                }
+            }
+
+            const aiDecision = ultraAIPredict(historyData);
+            lastPrediction = aiDecision.prediction;
+            const predictedNumber = aiDecision.number;
+
+            let nextPeriodFull = (BigInt(result.issueNumber) + 1n).toString();
+            let nextPeriod = nextPeriodFull.slice(-5);
+
+            periodDisplay.textContent = nextPeriod;
+            predictionDisplay.textContent = `${lastPrediction} ${predictedNumber}`;
+
+            historyData.unshift({
+                period: nextPeriod,
+                prediction: lastPrediction,
+                predictedNumber: predictedNumber,
+                result: "-",
+                resultStatus: "Pending"
+            });
+
+            updateHistory();
+            updateStats();
+            lastFetchedPeriod = result.issueNumber;
+        }
+
+        // Update history
+        function updateHistory() {
+            historyContainer.innerHTML = historyData.slice(0, 5).map(item => `
+                <div class="history-card ${item.resultStatus.toLowerCase()}">
+                    <div class="history-info">
+                        <div class="history-period">Period: ${item.period}</div>
+                        <div class="history-prediction">Prediction: ${item.prediction} ${item.predictedNumber}</div>
+                        <div class="history-result">Result: ${item.result !== "-" ? item.result : "Waiting..."}</div>
+                    </div>
+                    <div class="history-status ${item.resultStatus.toLowerCase()}">
+                        ${item.resultStatus === 'WIN' ? '<i class="fas fa-trophy"></i>' :
+                          item.resultStatus === 'LOSS' ? '<i class="fas fa-skull"></i>' :
+                          '<i class="fas fa-spinner"></i>'}
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        // Update stats
+        function updateStats() {
+            const wins = historyData.filter(item => item.resultStatus === "WIN").length;
+            const losses = historyData.filter(item => item.resultStatus === "LOSS").length;
+            const total = wins + losses;
+            const accuracy = total > 0 ? ((wins / total) * 100).toFixed(2) : 0;
+
+            winsDisplay.textContent = wins;
+            lossesDisplay.textContent = losses;
+            accuracyDisplay.textContent = `${accuracy}%`;
+            totalWins.textContent = wins;
+            totalLosses.textContent = losses;
+            winRatioValue.textContent = `${accuracy}%`;
+            document.querySelector('.stats-circle').style.background = `conic-gradient(var(--win) 0% ${accuracy}%, var(--loss) ${accuracy}% 100%)`;
+        }
+
+        // Show notification
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas ${type === 'win' ? 'fa-trophy' : type === 'loss' ? 'fa-skull' : 'fa-info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 3000);
+        }
+
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Initialize
+        function init() {
+            updateTime();
+            setInterval(updateTime, 1000);
+            setInterval(updatePrediction, 10000);
+            updateHistory();
+            updateStats();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
